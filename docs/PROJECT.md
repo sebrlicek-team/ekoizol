@@ -11,6 +11,10 @@
 - Formulář zůstává demo bez odesílání, obsah zůstává ukázkový. Stále čeká implementace klientského webu na další schválení.
 - Nastavení Pages a výsledek prvního Actions deploye je nutné ověřit po uložení změn. CCNplus/ekoizol je soukromý; publikování závisí na možnostech účtu a povolení Pages.
 
+### Výsledek prvního Pages nasazení
+
+- GitHub Actions run 40222081614: testy, build i deploy úspěšné. GitHub potvrdil publikování na https://ekoizol.seb-dev.cloud/ (stávající vlastní doména). Zdroj Pages stále může používat původní branch workflow; přepnutí Source na GitHub Actions doporučeno, aby se nespouštělo souběžné Jekyll nasazení. Živou HTTP kontrolu evidovat samostatně.
+
 ---
 
 

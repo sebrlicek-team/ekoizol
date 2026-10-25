@@ -13,3 +13,7 @@
 - Aktuálnost původních obchodních tvrzení, kariéry a právních textů je nutné potvrdit před ostrým spuštěním. Texty jsou převzaté, nejde o jejich právní revizi.
 - Ověřeno lokálně: 30 testů, standardní build a Pages build pro kořen vlastní domény i /ekoizol/. Kontrola všech místních souborů, odkazů a kotev při sestavení.
 - Po nasazení zkontrolovat desktop, mobilní menu, filtry referencí, galerie, demo formulář, staré adresy a noindex. Výsledek průchodu evidovat v předání.
+
+## Ověření veřejné verze
+
+GitHub Actions 40225528441: testy, sestavení i deploy úspěšné. Na pracovní doméně ověřen nový úvod, skutečné obrázky a styly, vyhledávání referencí bez diakritiky, otevření detailu a přepínání fotografií v dialogu. Kontrola mobilního rozložení v prohlížeči zatím neproběhla; responzivní pravidla jsou součástí klientského CSS. Formuláře zůstávají pouze demo.

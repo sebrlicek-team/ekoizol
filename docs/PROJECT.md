@@ -1,5 +1,19 @@
 # Projekt: ekoizol
 
+## GitHub Pages — 25. 10. 2026
+
+- Nový výslovný pokyn: aktualizovat sebrlicek-team/ekoizol i CCNplus/ekoizol pro GitHub Pages. Rozsah je technické zpřístupnění existující sestavy, nikoli implementace klientského obsahu nebo ostré spuštění ekoizol.cz.
+- Přidán workflow .github/workflows/pages.yml: při změně main spustí testy, sestaví aktivní projekt a nasadí dist pomocí oficiálních Pages actions. Zdroj publikování v Settings → Pages musí být GitHub Actions.
+- npm run build:pages používá PAGES_URL z actions/configure-pages, případně GITHUB_REPOSITORY. Podporuje /ekoizol/ i kořen vlastní domény; upravuje navigaci, média, CSS, canonical, Open Graph, sitemap a odkaz na úvod ze 404. Po převodu kontroluje všechny místní HTML odkazy, soubory a kotvy.
+- Původní npm run build a Cloudflare konfigurace zachovány. Dist se generuje, necommituje. Stávající kořenový CNAME v sebrlicek-team zachován; pro Actions se skutečná doména přebírá z nastavení Pages.
+- Ověření: všech 29 testů úspěšných v Node 24, včetně Pages pro oba vlastníky a vlastní doménu. Standardní build a Pages build úspěšné; původní sdílené zdroje obou kopií mají totožné Git blob hashe. Workflow používá Node 22 podle package.json.
+- Indexace náhledu zůstává vypnutá: HTML noindex,nofollow a robots.txt Disallow. GitHub Pages neaplikuje Cloudflare soubor _headers; zákaz indexace je proto v HTML. Živé nasazení dosud neověřeno.
+- Formulář zůstává demo bez odesílání, obsah zůstává ukázkový. Stále čeká implementace klientského webu na další schválení.
+- Nastavení Pages a výsledek prvního Actions deploye je nutné ověřit po uložení změn. CCNplus/ekoizol je soukromý; publikování závisí na možnostech účtu a povolení Pages.
+
+---
+
+
 ## Aktuální revize iterace 1 — 25. 10. 2026
 
 Tato revize navazuje na existující práci níže. Aktuální zadání dovoluje pouze průzkum a návrh struktury; nepředstavuje schválení dřívějšího návrhu ani pokyn k iteraci 2.

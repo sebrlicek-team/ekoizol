@@ -11,17 +11,20 @@ for(const base of ['https://sebrlicek-team.github.io/ekoizol/','https://ccnplus.
   try {
    await buildPages(base,out);
    const html=await fs.readFile(path.join(out,'index.html'),'utf8');
-   const detail=await fs.readFile(path.join(out,'detail/index.html'),'utf8');
+   const detail=await fs.readFile(path.join(out,'hydroizolace-zakladu-staveb/index.html'),'utf8');
+   const contact=await fs.readFile(path.join(out,'kontakt/index.html'),'utf8');
    const pathname=new URL(base).pathname;
    assert(html.includes(`href="${pathname}assets/site.css"`));
-   assert(html.includes(`href="${pathname}detail/"`));
+   assert(html.includes(`href="${pathname}sluzby/"`));
    assert(html.includes(`rel="canonical" href="${base}"`));
-   assert(detail.includes(`rel="canonical" href="${base}detail/"`));
-   assert(detail.includes(`href="${pathname}#kontakt"`));
+   assert(detail.includes(`rel="canonical" href="${base}hydroizolace-zakladu-staveb/"`));
+   assert(detail.includes(`href="${pathname}poptavka/"`));
    assert(html.includes('noindex,nofollow'));
-   assert(html.includes('data-mode="demo"'));
+   assert(contact.includes('data-mode="demo"'));
+   const redirect=await fs.readFile(path.join(out,'hydroizolace-zakladu-staveb.htm'),'utf8');
+   assert(redirect.includes(`url=${base}hydroizolace-zakladu-staveb/`));
    assert((await fs.readFile(path.join(out,'404.html'),'utf8')).includes(`href="${pathname}"`));
-   assert((await fs.readFile(path.join(out,'sitemap.xml'),'utf8')).includes(`${base}detail/`));
+   assert((await fs.readFile(path.join(out,'sitemap.xml'),'utf8')).includes(`${base}hydroizolace-zakladu-staveb/`));
    await fs.access(path.join(out,'.nojekyll'));
   } finally {await fs.rm(out,{recursive:true,force:true});}
  });

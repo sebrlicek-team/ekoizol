@@ -30,7 +30,7 @@ export function validate(site){
    if(s.type==='downloads')s.items.forEach(x=>{text(x.title,'dokument');url(x.href);if(!(x.href.startsWith('/')&&!x.href.startsWith('//'))&&!/^https:\/\//.test(x.href))fail('Dokument musí mít lokální nebo HTTPS adresu');});
    if(s.type==='cards')s.items.forEach(x=>{text(x.title,'karta');text(x.text,'popis karty');if(x.image)media(x.image);if(x.link)link(x.link);});
    if(s.type==='gallery'){list(s.images,'galerie');s.images.forEach(media);}
-   if(s.type==='split'){media(s.image);list(s.paragraphs,'odstavce');s.paragraphs.forEach(x=>text(x,'odstavec'));if(s.link)link(s.link);}
+   if(s.type==='split'){media(s.image);list(s.paragraphs,'odstavce');s.paragraphs.forEach(x=>text(x,'odstavec'));if(s.link)link(s.link);(s.links||[]).forEach(link);}
    if(s.type==='destinations'){if(s.image)media(s.image);s.items.forEach(x=>text(x,'destinace'));}
    if(['stats','specs'].includes(s.type))s.items.forEach(x=>{text(x.label,'parametr');text(x.value,'hodnota');});
    if(s.type==='steps')s.items.forEach(x=>{text(x.title,'krok');text(x.text,'popis kroku');});

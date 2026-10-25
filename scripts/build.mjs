@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {checkSeo} from './check-seo.mjs';
+import {restoreMedia} from './unpack-media.mjs';
 import {selectProject} from './project.mjs';
 import {validate} from '../src/lib/validate.mjs';
 import {renderPage} from '../src/page.mjs';
@@ -15,7 +16,7 @@ export async function inspectAssets(dir){
 }
 export async function checkLinks(dir){
  const all=await files(dir),known=new Set(all.map(f=>'/'+path.relative(dir,f).split(path.sep).join('/'))),docs=new Map();
- for(const f of all.filter(x=>x.endsWith('.html'))){const html=await fs.readFile(f,'utf8');const pathname='/'+path.relative(dir,f).split(path.sep).join('/');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==ids.length)throw new Error(`Duplicitní ID: ${pathname}`);docs.set(pathname,{html,ids:new Set(ids)});}
+ for(const f of all.filter(x=>/\.html?$/.test(x))){const html=await fs.readFile(f,'utf8');const pathname='/'+path.relative(dir,f).split(path.sep).join('/');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==ids.length)throw new Error(`Duplicitní ID: ${pathname}`);docs.set(pathname,{html,ids:new Set(ids)});}
  for(const [pathname,{html}] of docs){for(const m of html.matchAll(/\b(?:href|src|poster|data-src)="([^"]+)"/g)){
   const value=m[1].replaceAll('&amp;','&');if(!value.startsWith('/')&&!value.startsWith('#'))continue;
   const u=new URL(value,'https://local.invalid'+pathname);if(u.hostname!=='local.invalid')continue;
@@ -25,6 +26,7 @@ export async function checkLinks(dir){
  }}
 }
 export async function build(name='showcase',out=path.join(root,'dist')){
+ if(name==='ekoizol')await restoreMedia();
  if(!/^[a-z0-9-]+$/.test(name))throw new Error('Neplatný název konfigurace');
  const site=validate(JSON.parse(await fs.readFile(path.join(root,'sites',name+'.json'),'utf8')));
  const assets=await inspectAssets(path.join(root,'public'));
@@ -32,6 +34,12 @@ export async function build(name='showcase',out=path.join(root,'dist')){
  await fs.rm(out,{recursive:true,force:true});await fs.mkdir(out,{recursive:true});
  for(const f of assets){if(path.basename(f)==='.assetsignore')continue;const dest=path.join(out,path.relative(path.join(root,'public'),f));await fs.mkdir(path.dirname(dest),{recursive:true});await fs.copyFile(f,dest);}
  for(const page of site.pages){const dest=path.join(out,page.path.slice(1),'index.html');await fs.mkdir(path.dirname(dest),{recursive:true});await fs.writeFile(dest,renderPage(site,page));}
+ for(const [from,to] of Object.entries(site.redirects||{})){
+  if(!/^\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.htm$/.test(from)||!site.pages.some(page=>page.path===to))throw new Error(`Neplatné přesměrování: ${from} → ${to}`);
+  const dest=path.join(out,from.slice(1));await fs.mkdir(path.dirname(dest),{recursive:true});
+  const canonical=escape(new URL(to,site.url).href);
+  await fs.writeFile(dest,`<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,follow"><title>Stránka byla přesunuta</title><link rel="canonical" href="${canonical}"><meta http-equiv="refresh" content="0; url=${canonical}"><script>location.replace(document.querySelector('link[rel=canonical]').href+location.search+location.hash)</script></head><body><p>Stránka byla přesunuta. <a href="${escape(to)}">Pokračovat na novou adresu</a>.</p></body></html>`);
+ }
  await fs.writeFile(path.join(out,'404.html'),'<!doctype html><html lang="cs"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stránka nenalezena</title><h1>Stránka nenalezena</h1><p><a href="/">Zpět na úvod</a></p></html>');
  const sitemap=site.pages.map(p=>`<url><loc>${escape(new URL(p.path,site.url).href)}</loc></url>`).join('');
  await fs.writeFile(path.join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemap}</urlset>`);

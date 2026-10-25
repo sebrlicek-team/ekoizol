@@ -16,7 +16,7 @@ export async function buildPages(value, out=path.join(root,'dist')) {
  await build(name,out);
  const local=value=>value.startsWith('/')&&!value.startsWith('//')?base.pathname+value.slice(1):value;
  for(const file of await files(out)) {
-  if(file.endsWith('.html')) {
+  if(/\.html?$/.test(file)) {
    let html=await fs.readFile(file,'utf8');
    html=html.replace(/\b(href|src|poster|data-src|action)="([^"]*)"/g,(_,attr,value)=>`${attr}="${local(value)}"`);
    // Canonical and Open Graph URLs must identify this Pages deployment.
@@ -33,7 +33,7 @@ export async function buildPages(value, out=path.join(root,'dist')) {
  await fs.writeFile(path.join(out,'.nojekyll'),'');
  // Fail the build if any local link, image, stylesheet or fragment escapes the
  // deployment path or points to a missing file after the Pages transformation.
- for(const file of (await files(out)).filter(file=>file.endsWith('.html'))) {
+ for(const file of (await files(out)).filter(file=>/\.html?$/.test(file))) {
   const html=await fs.readFile(file,'utf8');
   const current=new URL(path.relative(out,file).split(path.sep).join('/'),base);
   for(const match of html.matchAll(/\b(?:href|src|poster|data-src|action)="([^"]+)"/g)) {
@@ -43,7 +43,7 @@ export async function buildPages(value, out=path.join(root,'dist')) {
    const relative=target.pathname.slice(base.pathname.length);
    const dest=path.join(out,relative.endsWith('/')||!relative?relative+'index.html':relative);
    await fs.access(dest);
-   if(target.hash&&dest.endsWith('.html')) {
+   if(target.hash&&/\.html?$/.test(dest)) {
     const ids=[...(await fs.readFile(dest,'utf8')).matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
     if(!ids.includes(decodeURIComponent(target.hash.slice(1))))throw new Error(`Chybějící kotva: ${target.href}`);
    }

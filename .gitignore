@@ -5,3 +5,6 @@ dist/
 .env.*
 .DS_Store
 test-results/
+
+# Original client photographs are restored from the versioned media bundle.
+public/assets/ekoizol/

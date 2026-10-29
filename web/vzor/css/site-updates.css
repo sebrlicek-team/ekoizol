@@ -1,0 +1,16 @@
+.logo img {
+  display: block;
+  width: 115px;
+  height: auto;
+}
+
+.form-notice {
+  background: #eef7e5;
+  border-left: 4px solid #64a120;
+  margin: 1.25rem 0 2rem;
+  padding: 1rem 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .logo img { width: 96px; }
+}
